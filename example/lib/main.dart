@@ -37,7 +37,6 @@ class _WebViewExampleState extends State<WebViewExample> {
   final Completer<WebViewController> _controller = Completer<WebViewController>();
   double _height = 50;
 
-
   @override
   void initState() {
     super.initState();
