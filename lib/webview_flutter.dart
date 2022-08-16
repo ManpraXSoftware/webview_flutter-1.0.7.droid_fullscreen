@@ -457,7 +457,7 @@ CreationParams _creationParamsfromWidget(WebView widget) {
   return CreationParams(
     initialUrl: widget.initialUrl,
     webSettings: _webSettingsFromWidget(widget),
-    javascriptChannelNames: _extractChannelNames(widget.javascriptChannels!),
+    javascriptChannelNames: _extractChannelNames(widget.javascriptChannels),
     userAgent: widget.userAgent,
     autoMediaPlaybackPolicy: widget.initialMediaPlaybackPolicy!,
   );
@@ -510,7 +510,7 @@ WebSettings _clearUnchangedWebSettings(
   );
 }
 
-Set<String> _extractChannelNames(Set<JavascriptChannel> channels) {
+Set<String> _extractChannelNames(Set<JavascriptChannel>? channels) {
   final Set<String> channelNames = channels == null
       ? <String>{}
       : channels.map((JavascriptChannel channel) => channel.name).toSet();
@@ -519,7 +519,7 @@ Set<String> _extractChannelNames(Set<JavascriptChannel> channels) {
 
 class _PlatformCallbacksHandler implements WebViewPlatformCallbacksHandler {
   _PlatformCallbacksHandler(this._widget) {
-    _updateJavascriptChannelsFromSet(_widget.javascriptChannels!);
+    _updateJavascriptChannelsFromSet(_widget.javascriptChannels);
   }
 
   WebView _widget;
@@ -564,7 +564,7 @@ class _PlatformCallbacksHandler implements WebViewPlatformCallbacksHandler {
     }
   }
 
-  void _updateJavascriptChannelsFromSet(Set<JavascriptChannel> channels) {
+  void _updateJavascriptChannelsFromSet(Set<JavascriptChannel>? channels) {
     _javascriptChannels.clear();
     if (channels == null) {
       return;
@@ -677,7 +677,7 @@ class WebViewController {
   Future<void> _updateWidget(WebView widget) async {
     _widget = widget;
     await _updateSettings(_webSettingsFromWidget(widget));
-    await _updateJavascriptChannels(widget.javascriptChannels!);
+    await _updateJavascriptChannels(widget.javascriptChannels);
   }
 
   Future<void>? _updateSettings(WebSettings newSettings) {
@@ -688,7 +688,7 @@ class WebViewController {
   }
 
   Future<void> _updateJavascriptChannels(
-      Set<JavascriptChannel> newChannels) async {
+      Set<JavascriptChannel>? newChannels) async {
     final Set<String> currentChannels =
         _platformCallbacksHandler!._javascriptChannels.keys.toSet();
     final Set<String> newChannelNames = _extractChannelNames(newChannels);
