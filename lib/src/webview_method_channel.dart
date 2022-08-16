@@ -25,7 +25,7 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
   static const MethodChannel _cookieManagerChannel =
       MethodChannel('plugins.flutter.io/cookie_manager');
 
-  Future<bool> _onMethodCall(MethodCall call) async {
+  Future<bool?> _onMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'javascriptChannelMessage':
         final String channel = call.arguments['channel'];
@@ -71,7 +71,7 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
   @override
   Future<void> loadUrl(
     String url,
-    Map<String, String> headers,
+    Map<String, String>? headers,
   ) async {
     assert(url != null);
     return _channel.invokeMethod<void>('loadUrl', <String, dynamic>{
@@ -81,13 +81,13 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
   }
 
   @override
-  Future<String> currentUrl() => _channel.invokeMethod<String>('currentUrl');
+  Future<String?> currentUrl() => _channel.invokeMethod<String>('currentUrl');
 
   @override
-  Future<bool> canGoBack() => _channel.invokeMethod<bool>("canGoBack");
+  Future<bool?> canGoBack() => _channel.invokeMethod<bool>("canGoBack");
 
   @override
-  Future<bool> canGoForward() => _channel.invokeMethod<bool>("canGoForward");
+  Future<bool?> canGoForward() => _channel.invokeMethod<bool>("canGoForward");
 
   @override
   Future<void> goBack() => _channel.invokeMethod<void>("goBack");
@@ -102,7 +102,7 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
   Future<void> clearCache() => _channel.invokeMethod<void>("clearCache");
 
   @override
-  Future<void> updateSettings(WebSettings settings) {
+  Future<void>? updateSettings(WebSettings settings) {
     final Map<String, dynamic> updatesMap = _webSettingsToMap(settings);
     if (updatesMap.isEmpty) {
       return null;
@@ -111,7 +111,7 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
   }
 
   @override
-  Future<String> evaluateJavascript(String javascriptString) {
+  Future<String?> evaluateJavascript(String javascriptString) {
     return _channel.invokeMethod<String>(
         'evaluateJavascript', javascriptString);
   }
@@ -129,7 +129,7 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
   }
 
   @override
-  Future<String> getTitle() => _channel.invokeMethod<String>("getTitle");
+  Future<String?> getTitle() => _channel.invokeMethod<String>("getTitle");
 
   @override
   Future<void> scrollTo(int x, int y) {
@@ -148,10 +148,10 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
   }
 
   @override
-  Future<int> getScrollX() => _channel.invokeMethod<int>("getScrollX");
+  Future<int?> getScrollX() => _channel.invokeMethod<int>("getScrollX");
 
   @override
-  Future<int> getScrollY() => _channel.invokeMethod<int>("getScrollY");
+  Future<int?> getScrollY() => _channel.invokeMethod<int>("getScrollY");
 
   /// Method channel implementation for [WebViewPlatform.clearCookies].
   static Future<bool> clearCookies() {
@@ -170,7 +170,7 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
     }
 
     void _addSettingIfPresent<T>(String key, WebSetting<T> setting) {
-      if (!setting.isPresent) {
+      if (!setting.isPresent!) {
         return;
       }
       map[key] = setting.value;
@@ -181,7 +181,7 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
     _addIfNonNull('debuggingEnabled', settings.debuggingEnabled);
     _addIfNonNull(
         'gestureNavigationEnabled', settings.gestureNavigationEnabled);
-    _addSettingIfPresent('userAgent', settings.userAgent);
+    _addSettingIfPresent('userAgent', settings.userAgent!);
     return map;
   }
 
@@ -193,8 +193,8 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
       CreationParams creationParams) {
     return <String, dynamic>{
       'initialUrl': creationParams.initialUrl,
-      'settings': _webSettingsToMap(creationParams.webSettings),
-      'javascriptChannelNames': creationParams.javascriptChannelNames.toList(),
+      'settings': _webSettingsToMap(creationParams.webSettings!),
+      'javascriptChannelNames': creationParams.javascriptChannelNames!.toList(),
       'userAgent': creationParams.userAgent,
       'autoMediaPlaybackPolicy': creationParams.autoMediaPlaybackPolicy.index,
     };
